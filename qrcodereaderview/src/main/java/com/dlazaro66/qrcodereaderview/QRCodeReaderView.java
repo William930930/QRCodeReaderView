@@ -58,6 +58,8 @@ public class QRCodeReaderView extends SurfaceView
     public interface OnQRCodeReadListener {
 
         void onQRCodeRead(String text, PointF[] points);
+
+        void onCameraError(Exception error);
     }
 
     private OnQRCodeReadListener mOnQRCodeReadListener;
@@ -259,7 +261,14 @@ public class QRCodeReaderView extends SurfaceView
         mCameraManager.setPreviewCallback(this);
         mCameraManager.setDisplayOrientation(getCameraDisplayOrientation());
 
-        mCameraManager.startPreview();
+        try {
+            mCameraManager.startPreview();
+        } catch (Exception e) {
+            if(mOnQRCodeReadListener!=null)
+                mOnQRCodeReadListener.onCameraError(e);
+            SimpleLog.e(TAG, "Exception: " + e.getMessage());
+            mCameraManager.closeDriver();
+        }
     }
 
     @Override

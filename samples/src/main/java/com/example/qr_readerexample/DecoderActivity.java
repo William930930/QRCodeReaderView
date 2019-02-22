@@ -8,11 +8,14 @@ import android.support.annotation.NonNull;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
 import android.widget.TextView;
+import android.widget.Toast;
+
 import com.dlazaro66.qrcodereaderview.QRCodeReaderView;
 import com.dlazaro66.qrcodereaderview.QRCodeReaderView.OnQRCodeReadListener;
 
@@ -81,6 +84,16 @@ public class DecoderActivity extends AppCompatActivity
   @Override public void onQRCodeRead(String text, PointF[] points) {
     resultTextView.setText(text);
     pointsOverlayView.setPoints(points);
+  }
+
+//  Called when the camera is crashed
+//  "error" : exception returned
+  @Override
+  public void onCameraError(Exception error) {
+    Log.e("DecoderActivity", "App Crashed : " + error.toString());
+    if (error instanceof RuntimeException) {
+      Toast.makeText(this, error.toString(), Toast.LENGTH_SHORT).show();
+    }
   }
 
   private void requestCameraPermission() {
